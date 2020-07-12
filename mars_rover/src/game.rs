@@ -69,11 +69,15 @@ impl Game {
         Orientation::N => {
           self.position.coordinate.y += 1;
         }
-        Orientation::E => {}
+        Orientation::E => {
+          self.position.coordinate.x += 1;
+        }
         Orientation::S => {
           self.position.coordinate.y -= 1;
         }
-        Orientation::W => {}
+        Orientation::W => {
+          self.position.coordinate.x -= 1;
+        }
       },
       Move::L => match self.position.orientation {
         Orientation::N => {
@@ -89,6 +93,20 @@ impl Game {
           self.position.orientation = Orientation::S;
         }
       },
+      Move::R => match self.position.orientation {
+        Orientation::N => {
+          self.position.orientation = Orientation::E;
+        }
+        Orientation::E => {
+          self.position.orientation = Orientation::N;
+        }
+        Orientation::S => {
+          self.position.orientation = Orientation::W;
+        }
+        Orientation::W => {
+          self.position.orientation = Orientation::S;
+        }
+      },
       _ => {}
     }
   }
@@ -99,8 +117,38 @@ impl Game {
 
 #[test]
 fn turning_right() {
-  Game::new(
+  let mut game = Game::new(
     Coordinate { x: 3, y: 3 },
     Position::new(0, 0, Orientation::N),
   );
+  game.make_move(Move::R);
+  assert_eq!(game.position().coordinate.x, 0);
+  assert_eq!(game.position().coordinate.y, 0);
+  assert_eq!(game.position().orientation, Orientation::E);
+}
+
+#[test]
+fn going_east() {
+  let mut game = Game::new(
+    Coordinate { x: 3, y: 3 },
+    Position::new(0, 0, Orientation::N),
+  );
+  game.make_move(Move::R);
+  game.make_move(Move::F);
+  assert_eq!(game.position().coordinate.x, 1);
+  assert_eq!(game.position().coordinate.y, 0);
+  assert_eq!(game.position().orientation, Orientation::E);
+}
+
+#[test]
+fn going_west() {
+  let mut game = Game::new(
+    Coordinate { x: 3, y: 3 },
+    Position::new(1, 1, Orientation::N),
+  );
+  game.make_move(Move::L);
+  game.make_move(Move::F);
+  assert_eq!(game.position().coordinate.x, 0);
+  assert_eq!(game.position().coordinate.y, 1);
+  assert_eq!(game.position().orientation, Orientation::W);
 }
